@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import Subject from './components/Subject';
 import TOC from './components/TOC';
-import Content from './components/Content';
+import ReadContent from './components/ReadContent';
+import CreateContent from './components/CreateContent';
+import Control from './components/Control';
 import './App.css';
 
 class App extends Component {
@@ -10,6 +12,7 @@ class App extends Component {
     super(props);
     this.state = {
       mode: 'read',
+      selected_content_id: 2,
       //초기화 대상
       subject: { title: 'Web', sub: 'World Wide Web'},
       welcome: { title: 'Welcome', desc: 'Hello, React!!'},
@@ -21,13 +24,25 @@ class App extends Component {
     }
   }
   render(){
-    let _title, _desc = null;
+    let _title, _desc, _article = null;
     if(this.state.mode === 'welcome'){
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     } else if(this.state.mode === 'read') {
-      _title = this.state.contents[0].title;
-      _desc = this.state.contents[0].desc;
+      var i = 0;
+      while(i < this.state.contents.length){
+        var data = this.state.contents[i]
+        if(data.id === this.state.selected_content_id){
+          _title = data.title;
+          _desc = data.desc;
+          break;
+        }
+        i++;
+      };
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+    } else if(this.state.mode === 'create'){
+      _article = <CreateContent></CreateContent>;
     }
     return (
       <div className="App">
@@ -37,10 +52,19 @@ class App extends Component {
         })
       }.bind(this)}></Subject>
       <Subject title="React" sub="For UI"></Subject>
-      <TOC data={this.state.contents} onChangePage={function(){
-        alert('hi');
+      <TOC data={this.state.contents} onChangePage={function(id){
+        this.setState({
+          mode: 'read',
+          selected_content_id: +id
+          // Number(id) 로 사용가능
+        })
       }.bind(this)} ></TOC>
-      <Content title={_title} desc={_desc}></Content>
+      <Control onChangeMode={function(_mode){
+        this.setState({
+          mode: _mode
+        })
+      }.bind(this)}></Control>
+      {_article}
     </div>
     );
   };
