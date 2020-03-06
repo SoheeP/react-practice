@@ -10,6 +10,8 @@ class App extends Component {
   constructor(props){
     //컴포넌트 초기화 시켜주고 싶은 코드를 넣는다
     super(props);
+    // ui의 영향을 주지 않는 변수이므로, state안에 넣지 않는다.
+    this.max_content_id = 3;
     this.state = {
       mode: 'read',
       selected_content_id: 2,
@@ -42,7 +44,16 @@ class App extends Component {
       };
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     } else if(this.state.mode === 'create'){
-      _article = <CreateContent></CreateContent>;
+      _article = <CreateContent onSubmit={function(_title, _desc){
+        //add content to this.contents
+        this.max_content_id = this.max_content_id + 1;
+        //직접 수정하면 react가 인지를 못하므로 우선 추가를 해준 뒤
+        let _contents = this.state.contents.concat({id: this.max_content_id, title: _title, desc: _desc})
+        //setState로 변경사실을 추가
+        this.setState({
+          contents: _contents
+        });
+      }.bind(this)}></CreateContent>;
     }
     return (
       <div className="App">

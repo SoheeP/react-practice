@@ -9,6 +9,7 @@ class CreateContent extends Component{
         onSubmit={function(e){
           // 페이지변화가 없는 페이지를 만들려고 하기 때문에, 이벤트를 막음
           e.preventDefault();
+          this.props.onSubmit(e.target.title.value, e.target.desc.value);
           alert('submit!')
         }.bind(this)}
         >
