@@ -2,16 +2,24 @@ import React, { Component } from 'react';
 import TodoListTemplate from './components/TodoListTemplate';
 import Form from './components/Form';
 import TodoItemList from './components/TodoItemList';
+import Pallette from './components/Pallette';
 
 class App extends Component {
   id = 3;
   state = {
     input: '',
     todos: [
-      {id: 0, text: '리액트 소개', checked: false },
-      {id: 1, text: '리액트 소개', checked: true },
-      {id: 2, text: '리액트 소개', checked: false },
-    ]
+      {id: 0, text: '리액트 소개', checked: false, color:'#343a40' },
+      {id: 1, text: '리액트 소개', checked: true, color:'#343a40' },
+      {id: 2, text: '리액트 소개', checked: false, color:'#343a40' },
+    ],
+    colors: [
+      {id: 0, color: '#343a40' },
+      {id: 1, color: '#f03e3e' },
+      {id: 2, color: '#12b886' },
+      {id: 3, color: '#228ae6' },
+    ],
+    selected: 0,
   };
   handleChange = (e) => {
     this.setState({
@@ -19,7 +27,7 @@ class App extends Component {
     })
   };
   handleCreate = () => {
-    const { input, todos } = this.state;
+    const { input, todos, colors, selected } = this.state;
     this.setState({
       input: '',
       // change로 입력된 값을 click시 바로 비워준다
@@ -27,6 +35,7 @@ class App extends Component {
         id: this.id ++,
         text: input,
         checkd: false,
+        color: colors[selected].color,
       })
     })
   };
@@ -64,19 +73,33 @@ class App extends Component {
     })
   }
 
+  handleSelect = (key) => {
+    const { colors } = this.state;
+    const index = colors.findIndex(color => color.id === key)
+    this.setState({
+      selected: index,
+    })
+  }
+
   render() {
-    const { input, todos } = this.state;
-    const { handleChange, handleCreate, handleKeyPress, handleToggle, handleRemove } = this;
+    const { input, todos, colors, selected } = this.state;
+    const { handleChange, handleCreate, handleKeyPress, handleToggle, handleRemove, handleSelect } = this;
     return (
       <div>
         <TodoListTemplate form={(
-        <Form 
-          value = {input}
-          onKeyPress = {handleKeyPress}
-          onChange = {handleChange}
-          onCreate = {handleCreate}
-        />
-        )}>
+          <Form 
+            color = {colors[selected].color}
+            value = {input}
+            onKeyPress = {handleKeyPress}
+            onChange = {handleChange}
+            onCreate = {handleCreate}
+          />
+        )}
+          pallette ={
+            <Pallette colors={colors} selected={selected} onSelect={handleSelect}/>
+          }
+        >
+          {/* 여기가 템플릿의 childerne 부분 */}
           <TodoItemList 
             todos={todos} 
             onToggle={handleToggle} 
